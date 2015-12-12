@@ -38,12 +38,7 @@ public class BusinessController {
 			return null;
 		}
 		
-		List<LoanApplication> clientLoans = client.getLoanApplications();
-		
 		boolean isClosedTime = false;
-		
-		int maxPossibleAmount = loan.getMaxPossibleAmount();		
-		boolean ipCountPassed = false;	
 		
 		Date date = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
@@ -56,10 +51,11 @@ public class BusinessController {
 			return null;
 		}
 		
-		String requesterIP = requestContext.getRemoteAddr().toString();	
-		
+		boolean ipCountPassed = false;	
+		String requesterIP = requestContext.getRemoteAddr().toString();		
 		int ipCount = 0;
 		
+		List<LoanApplication> clientLoans = client.getLoanApplications();
 		for (LoanApplication clientLoan:clientLoans){
 			if (clientLoan.getIp().equals(requesterIP) && DateUtils.isSameDay(clientLoan.getLoanStartDate(), date)){
 				ipCount++;
@@ -68,6 +64,7 @@ public class BusinessController {
 		
 		ipCountPassed = (ipCount < 3)?true:false;
 		
+		int maxPossibleAmount = loan.getMaxPossibleAmount();
 		if (isClosedTime && (loanAmount > maxPossibleAmount)){
 			//first condition is not passed
 			return null;
